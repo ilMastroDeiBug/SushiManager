@@ -1,0 +1,88 @@
+﻿<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sushi Manager</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>🍱 Sushi <span>Manager</span></h1>
+            <p>Ordina il tuo sushi senza confusione.</p>
+        </header>
+
+        <div class="box-insert">
+            <form action="/aggiungi" method="POST">
+                <div class="form-group">
+                    <input type="text" name="utente" placeholder="Il tuo nome..." value="{{ nome_cercato if nome_cercato else '' }}" required>
+                    <input type="number" name="quantita" value="1" min="1" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" name="piatto" placeholder="Es. 104, Sake, Uramaki..." required autocomplete="off">
+                </div>
+                <button type="submit" class="btn-add"><i class="fas fa-plus-circle"></i> Aggiungi Ordine</button>
+            </form>
+        </div>
+
+        {% if nome_cercato and lista_personale %}
+        <div class="personal-section">
+            <h2>👋 Ciao {{ nome_cercato }} <small style="font-size: 0.6em; color: #888;">({{ totale_personale }} pz)</small></h2>
+            <ul class="ticket-list">
+                {% for item in lista_personale %}
+                <li class="ticket">
+                    <div class="ticket-info">
+                        <span class="ticket-num">#{{ item.piatto }}</span>
+                        <span class="ticket-qta">Quantità: {{ item.qta }}</span>
+                    </div>
+                    <a href="{{ url_for('rimuovi', utente=nome_cercato, piatto=item.piatto) }}" class="btn-delete">
+                        <i class="fas fa-times"></i>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <h3>📜 Riepilogo Tavolo ({{ totale_generale }} pz)</h3>
+
+        <div class="table-container">
+            {% if lista_generale %}
+            <table>
+                <thead>
+                    <tr>
+                        <th width="20%">Piatto</th>
+                        <th width="15%">Tot</th>
+                        <th>Dettagli Ordine</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in lista_generale %}
+                    <tr>
+                        <td style="font-weight: bold; color: #2d3436;">{{ item.nome }}</td>
+                        <td><span class="badge-qta">{{ item.totale }}</span></td>
+                        <td class="user-detail">{{ item.dettagli }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div style="padding: 40px; text-align: center; color: #aaa;">
+                <i class="fas fa-utensils" style="font-size: 30px; margin-bottom: 10px;"></i>
+                <p>Nessun ordine inserito. Inizia tu!</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <footer>
+            <a href="/reset" class="btn-reset" onclick="return confirm('Sicuro di voler cancellare TUTTI gli ordini del tavolo?');">
+                <i class="fas fa-trash-alt"></i> Reset Completo Tavolo
+            </a>
+        </footer>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  sushimanager:
+    # Indica a Docker di usare il Dockerfile che abbiamo creato nella stessa cartella
+    build: .
+    # Mappa la porta: [Porta del tuo PC]:[Porta esposta dal contenitore]
+    ports:
+      - "5000:5000"
+    # Monta la cartella del codice nel contenitore per vedere le modifiche in tempo reale (utile per il debug)
+    volumes:
+      - .:/app
+    # Riavvia l'app in caso di crash
+    restart: always
